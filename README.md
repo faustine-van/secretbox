@@ -44,7 +44,8 @@ A secure key management solution built for developers, integrating **server-side
 ### Development Tools
 - **TypeScript** – Type safety (gradual adoption)  
 - **Jest + React Testing Library** – Unit/component testing  
-- **Playwright** – E2E testing  
+- **Playwright** – E2E testing
+- **Trae IDE AND GEMINI CLI**
 
 ### Deployment
 - [Vercel](https://vercel.com/) – Hosting & deployment  
@@ -98,7 +99,7 @@ To make AI output more accurate, context will be provided through:
 
 ## 📊 Success Metrics & Timeline
 
-### MVP Goals (3 Months)
+### MVP Goals
 - ✅ User authentication working  
 - ✅ Secure key CRUD with encryption  
 - ✅ Collections-based organization  
