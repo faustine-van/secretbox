@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Core Security Palette - Light Mode */
+    --background: 240 20% 99%;
+    --foreground: 240 20% 8%;
+
+    /* Glassmorphism & Cards */
+    --card: 240 20% 99%;
+    --card-foreground: 240 20% 8%;
+    --glass-background: 240 20% 99% / 0.8;
+    --glass-border: 240 20% 90% / 0.3;
+
+    /* Security Primary Colors */
+    --primary: 240 75% 25%;
+    --primary-foreground: 240 20% 99%;
+    --primary-glow: 240 75% 35%;
+
+    /* Accent Colors */
+    --secondary: 240 15% 95%;
+    --secondary-foreground: 240 20% 20%;
+    --accent: 195 75% 65%;
+    --accent-foreground: 240 20% 8%;
+    --accent-glow: 195 75% 75%;
+
+    /* Muted & Subtle */
+    --muted: 240 15% 96%;
+    --muted-foreground: 240 10% 45%;
+
+    /* Interactive Elements */
+    --border: 240 20% 90%;
+    --input: 240 20% 96%;
+    --ring: 240 75% 25%;
+    --popover: 240 20% 99%;
+    --popover-foreground: 240 20% 8%;
+
+    /* Status Colors */
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 45 90% 60%;
+    --warning-foreground: 45 20% 20%;
+    --success: 140 65% 45%;
+    --success-foreground: 0 0% 100%;
+
+    /* Sidebar Specific */
+    --sidebar-background: 240 20% 98% / 0.95;
+    --sidebar-foreground: 240 20% 15%;
+    --sidebar-primary: 240 75% 25%;
+    --sidebar-primary-foreground: 240 20% 99%;
+    --sidebar-accent: 240 15% 94%;
+    --sidebar-accent-foreground: 240 20% 20%;
+    --sidebar-border: 240 20% 88%;
+    --sidebar-ring: 240 75% 25%;
+
+    /* Effects & Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(240 75% 25%), hsl(240 75% 35%));
+    --gradient-accent: linear-gradient(135deg, hsl(195 75% 65%), hsl(195 75% 75%));
+    --gradient-surface: linear-gradient(145deg, hsl(240 20% 99%), hsl(240 15% 96%));
+    --shadow-glass: 0 8px 32px hsl(240 75% 25% / 0.1);
+    --shadow-elegant: 0 4px 20px hsl(240 20% 20% / 0.08);
+
+    /* Animation Curves */
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Core Security Palette - Dark Mode */
+    --background: 240 20% 6%;
+    --foreground: 240 20% 95%;
+
+    /* Glassmorphism & Cards */
+    --card: 240 20% 8%;
+    --card-foreground: 240 20% 95%;
+    --glass-background: 240 20% 8% / 0.8;
+    --glass-border: 240 20% 25% / 0.3;
+
+    /* Security Primary Colors */
+    --primary: 240 75% 65%;
+    --primary-foreground: 240 20% 8%;
+    --primary-glow: 240 75% 75%;
+
+    /* Accent Colors */
+    --secondary: 240 15% 12%;
+    --secondary-foreground: 240 20% 85%;
+    --accent: 195 75% 55%;
+    --accent-foreground: 240 20% 95%;
+    --accent-glow: 195 75% 65%;
+
+    /* Muted & Subtle */
+    --muted: 240 15% 12%;
+    --muted-foreground: 240 10% 65%;
+
+    /* Interactive Elements */
+    --border: 240 20% 18%;
+    --input: 240 20% 12%;
+    --ring: 240 75% 65%;
+    --popover: 240 20% 8%;
+    --popover-foreground: 240 20% 95%;
+
+    /* Status Colors */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 45 90% 55%;
+    --warning-foreground: 45 20% 20%;
+    --success: 140 65% 50%;
+    --success-foreground: 0 0% 100%;
+
+    /* Sidebar Specific */
+    --sidebar-background: 240 20% 5% / 0.95;
+    --sidebar-foreground: 240 20% 85%;
+    --sidebar-primary: 240 75% 65%;
+    --sidebar-primary-foreground: 240 20% 8%;
+    --sidebar-accent: 240 15% 10%;
+    --sidebar-accent-foreground: 240 20% 85%;
+    --sidebar-border: 240 20% 15%;
+    --sidebar-ring: 240 75% 65%;
+
+    /* Effects & Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(240 75% 65%), hsl(240 75% 75%));
+    --gradient-accent: linear-gradient(135deg, hsl(195 75% 55%), hsl(195 75% 65%));
+    --gradient-surface: linear-gradient(145deg, hsl(240 20% 8%), hsl(240 15% 12%));
+    --shadow-glass: 0 8px 32px hsl(240 75% 65% / 0.15);
+    --shadow-elegant: 0 4px 20px hsl(240 20% 5% / 0.3);
+  }
+}
