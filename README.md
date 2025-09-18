@@ -26,7 +26,7 @@ A secure key management solution built for developers, integrating **server-side
 ## 🛠️ Tech Stack
 
 ### Frontend
-- [Next.js 14+ (App Router)](https://nextjs.org/) – Full-stack React framework  
+- [Next.js 15.5+ (App Router)](https://nextjs.org/) – Full-stack React framework  
 - [Tailwind CSS](https://tailwindcss.com/) – Utility-first styling  
 - [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) – Form handling & validation  
 - [Lucide React](https://lucide.dev/) – Icon library  
