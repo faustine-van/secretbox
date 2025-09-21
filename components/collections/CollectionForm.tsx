@@ -56,8 +56,9 @@ export const CollectionForm: React.FC<CollectionFormProps> = ({
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+    <Form {...form} className="border bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+  <div className="border bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 rounded-lg">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6  ">
         {formError && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
@@ -103,12 +104,13 @@ export const CollectionForm: React.FC<CollectionFormProps> = ({
               Cancel
             </Button>
           )}
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="g-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isEditing ? 'Update Collection' : 'Create Collection'}
           </Button>
         </div>
       </form>
+      </div>
     </Form>
   );
 };

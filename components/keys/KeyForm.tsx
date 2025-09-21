@@ -235,47 +235,71 @@ export function KeyForm({
               <CardContent className="space-y-5">
                 {/* Collection Selection */}
                 {collections && collections.length > 0 && (
-                  <FormField
-                    control={form.control}
-                    name="collectionId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-semibold flex items-center text-slate-900 dark:text-slate-100">
-                          <Folder className="w-4 h-4 mr-2" />
-                          Collection (Optional)
-                        </FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 dark:focus:ring-purple-400/20">
-                              <SelectValue placeholder="Choose a collection or leave standalone" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectItem key="standalone-key-option" value="standalone"  className="text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700">
-                              <div className="flex items-center">
-                                <Key className="w-4 h-4 mr-2 text-slate-400 dark:text-slate-500" />
-                                <span className="text-slate-500 dark:text-slate-400">Standalone Key (No Collection)</span>
-                              </div>
-                            </SelectItem>
-                            {collections.filter(collection => collection && collection.id).map((collection) => (
-                              <SelectItem key={collection.id} value={collection.id} className="text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700">
-                                <div className="flex items-center">
-                                  <Folder className="w-4 h-4 mr-2 text-purple-600 dark:text-purple-400" />
-                                  <span>{collection.name}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription className="flex items-center text-slate-600 dark:text-slate-400">
-                          <Info className="w-3 h-3 mr-1" />
-                          Group related keys together or keep this key independent
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
+  <FormField
+    control={form.control}
+    name="collectionId"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel className="text-sm font-semibold flex items-center text-slate-900 dark:text-slate-100">
+          <Folder className="w-4 h-4 mr-2" />
+          Collection (Optional)
+        </FormLabel>
+        <Select 
+          onValueChange={(value) => {
+            // Handle standalone option properly
+            field.onChange(value === "standalone" ? undefined : value);
+          }} 
+          value={field.value || "standalone"}
+        >
+          <FormControl>
+            <SelectTrigger className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 dark:focus:ring-purple-400/20">
+              <SelectValue placeholder="Choose a collection or leave standalone" />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent 
+            className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 z-[9999] shadow-lg" 
+            position="popper"
+            sideOffset={4}
+          >
+            {/* Standalone Option */}
+            <SelectItem 
+              key="standalone-key-option" 
+              value="standalone"
+              className="text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer"
+            >
+              <div className="flex items-center">
+                <Key className="w-4 h-4 mr-2 text-slate-400 dark:text-slate-500" />
+                <span className="text-slate-500 dark:text-slate-400">Standalone Key (No Collection)</span>
+              </div>
+            </SelectItem>
+            
+            {/* Collection Options */}
+            {collections
+              .filter(collection => collection?.id && collection?.name) // More specific filtering
+              .map((collection) => (
+                <SelectItem 
+                  key={collection.id} 
+                  value={collection.id} 
+                  className="text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer"
+                >
+                  <div className="flex items-center">
+                    <Folder className="w-4 h-4 mr-2 text-purple-600 dark:text-purple-400" />
+                    <span>{collection.name}</span>
+                  </div>
+                </SelectItem>
+              ))
+            }
+          </SelectContent>
+        </Select>
+        <FormDescription className="flex items-center text-slate-600 dark:text-slate-400">
+          <Info className="w-3 h-3 mr-1" />
+          Group related keys together or keep this key independent
+        </FormDescription>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+)}
 
                 <Separator className="my-4 bg-slate-200 dark:bg-slate-700" />
 

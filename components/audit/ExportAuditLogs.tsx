@@ -17,6 +17,6 @@ export function ExportAuditLogs() {
   };
 
   return (
-    <Button onClick={handleExport}>Export Logs</Button>
+    <Button onClick={handleExport} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">Export Logs</Button>
   );
 }

@@ -21,12 +21,12 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { useTheme } from '@/components/ThemeProvider';
 import Link from 'next/link';
+import { useTheme } from "next-themes";
 
 
 const HomePage: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
 
@@ -122,11 +122,10 @@ const HomePage: React.FC = () => {
               <a href="#docs" className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 Docs
               </a>
-              <button
-                onClick={toggleTheme}
+              <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                 className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 aria-label="Toggle theme"
-              >
+              > 
                 {theme === 'light' ? (
                   <div className="w-5 h-5 bg-slate-800 rounded-full"></div>
                 ) : (

@@ -224,7 +224,7 @@ const handleDeleteKey = async (keyId: string) => {
           </Button>
           
           <Button variant="outline" onClick={handleRefresh} disabled={loading}>
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4  ${loading ? 'animate-spin' : ''}`} />
           </Button>
 
           <DropdownMenu>
