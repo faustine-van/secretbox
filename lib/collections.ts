@@ -15,8 +15,13 @@ export function generateCollectionColor(): string {
 
 export function sortCollections(collections: Collection[], sortBy: keyof Collection = 'created_at'): Collection[] {
   return [...collections].sort((a, b) => {
-    if (a[sortBy] < b[sortBy]) return -1;
-    if (a[sortBy] > b[sortBy]) return 1;
+    if (!a || !b) return 0;
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
+    if (aValue === null || aValue === undefined) return 1;
+    if (bValue === null || bValue === undefined) return -1;
+    if (aValue < bValue) return -1;
+    if (aValue > bValue) return 1;
     return 0;
   });
 }

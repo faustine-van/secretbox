@@ -13,6 +13,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useTheme } from '../ThemeProvider';
+import { useAuth } from '../auth/AuthProvider';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -22,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({
   onToggleSidebar, 
 }) => {
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -140,19 +142,24 @@ const Header: React.FC<HeaderProps> = ({
               aria-label="User menu"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
+                {user ? (
+                  <span className="text-white font-bold">
+                    {user.user_metadata?.name?.[0] || user.email?.[0]?.toUpperCase()}
+                  </span>
+                ) : (
+                  <User className="w-4 h-4 text-white" />
+                )}
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">John Doe</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Admin</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user?.user_metadata?.name || user?.email}</p>
               </div>
             </button>
 
-            {showUserMenu && (
+            {showUserMenu && user && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-50">
                 <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700">
-                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">John Doe</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">john.doe@company.com</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user.user_metadata?.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
                 </div>
                 
                 <a href="/dashboard/settings" className="w-full flex items-center space-x-2 px-4 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300">
@@ -167,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({
                 
                 <hr className="my-2 border-slate-200 dark:border-slate-700" />
                 
-                <button className="w-full flex items-center space-x-2 px-4 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-red-600 dark:text-red-400">
+                <button onClick={logout} className="w-full flex items-center space-x-2 px-4 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-red-600 dark:text-red-400">
                   <LogOut className="w-4 h-4" />
                   <span className="text-sm">Sign Out</span>
                 </button>

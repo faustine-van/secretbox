@@ -64,10 +64,21 @@ export type Database = {
           collection_id: string;
           user_id: string;
           name: string;
-          value: string;
-          iv: string;
+          encrypted_value: string;
+          iv: string; // Changed from encryption_iv
           auth_tag: string;
+          salt: string; // Added this field
+          description: string | null;
+          key_type: string;
+          tags: string[] | null;
+          url: string | null;
+          username: string | null;
+          expires_at: string | null;
+          is_favorite: boolean;
+          last_accessed_at: string | null;
+          access_count: number;
           created_at: string;
+          updated_at: string | null;
         };
         Insert: {
           id?: string;
@@ -78,6 +89,8 @@ export type Database = {
           iv: string;
           auth_tag: string;
           created_at?: string;
+          key_type: string;
+          last_accessed_at?: string | null;
         };
         Update: {
           id?: string;
@@ -88,6 +101,8 @@ export type Database = {
           iv?: string;
           auth_tag?: string;
           created_at?: string;
+          key_type?: string;
+          last_accessed_at?: string | null;
         };
       };
     };

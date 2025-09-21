@@ -1,17 +1,17 @@
 
-import { useSession } from './useSession';
+import { useAuth } from './useAuth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export function useProtectedRoute() {
-  const session = useSession();
+  const { session, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!session) {
+    if (!loading && !session) {
       router.push('/login');
     }
-  }, [session, router]);
+  }, [session, router, loading]);
 
   return session;
 }

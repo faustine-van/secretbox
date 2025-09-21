@@ -10,15 +10,15 @@ export function useKeyReveal(keyId: string) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/keys/${keyId}`,
+      const response = await fetch(`/api/keys/${keyId}/reveal`,
         {
-          method: 'GET',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ masterPassword }),
         });
       if (!response.ok) {
-        const { error } = await response.json();
-        throw new Error(error.message || 'Failed to reveal key');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to reveal key');
       }
       const { value } = await response.json();
       setRevealedValue(value);

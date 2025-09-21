@@ -3,9 +3,9 @@ import { createSupabaseServerClient } from '@/lib/server/supabase';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -15,13 +15,13 @@ export async function GET(request: Request) {
   const { data: keys, error: keysError } = await supabase
     .from('keys')
     .select('*')
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .textSearch('name', query, { type: 'websearch' });
 
   const { data: collections, error: collectionsError } = await supabase
     .from('collections')
     .select('*')
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .textSearch('name', query, { type: 'websearch' });
 
   if (keysError || collectionsError) {

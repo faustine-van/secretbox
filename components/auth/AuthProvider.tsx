@@ -13,6 +13,7 @@ interface AuthResponse {
 interface AuthContextType {
   session: Session | null;
   user: User | null;
+  loading: boolean;
   login: (email: string, password: string, masterPassword?: string) => Promise<AuthResponse>;
   register: (email: string, password: string, fullName: string, masterPassword: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
@@ -25,19 +26,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const { data: { user } } = await supabase.auth.getUser();
       setSession(session);
-      setUser(session?.user ?? null);
+      setUser(user);
+      setLoading(false);
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [supabase.auth]);
 
   const login = async (email: string, password: string, masterPassword?: string): Promise<AuthResponse> => {
@@ -116,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, login, register, logout }}>
+    <AuthContext.Provider value={{ session, user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

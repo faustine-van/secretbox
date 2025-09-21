@@ -6,13 +6,11 @@ import { CollectionFormData } from '@/types/supabase';
 import { z } from 'zod';
 
 export function useCollectionForm(defaultValues?: CollectionFormData) {
-  const form = useForm<z.infer<typeof CreateCollectionSchema>>({
+  const form = useForm<CollectionFormData>({
     resolver: zodResolver(CreateCollectionSchema),
     defaultValues: defaultValues || {
       name: '',
       description: '',
-      color: '',
-      icon: '',
     },
   });
 

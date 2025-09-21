@@ -32,7 +32,7 @@ const useFormField = () => {
   const itemContext = React.useContext(FormItemContext)
   const { getFieldState, formState } = useFormContext()
 
-  const fieldState = getFieldState(fieldContext.name, formState)
+  const fieldState = getFieldState(String(fieldContext.name), formState)
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>")
@@ -114,13 +114,13 @@ const FormControl = React.forwardRef<
 FormControl.displayName = "FormControl"
 
 const FormDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
+  HTMLSpanElement,
+  React.HTMLAttributes<HTMLSpanElement>
 >(({ className, ...props }, ref) => {
   const { formDescriptionId } = useFormField()
 
   return (
-    <p
+    <span
       ref={ref}
       id={formDescriptionId}
       className={cn("text-sm text-muted-foreground", className)}

@@ -3,16 +3,16 @@ import { createSupabaseServerClient } from '@/lib/server/supabase';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { data: audit_logs, error } = await supabase
     .from('audit_logs')
     .select('*')
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
   if (error) {

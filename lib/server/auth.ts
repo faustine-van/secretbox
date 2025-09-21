@@ -3,14 +3,14 @@ import { createSupabaseServerClient } from '@/lib/server/supabase';
 import { Profile } from '@/types/supabase';
 import * as bcrypt from 'bcrypt';
 
-export async function getServerSession() {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  return session;
+export async function getServerUser() {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
 }
 
 export async function validateMasterPassword(userId: string, masterPassword: string): Promise<boolean> {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: profile, error } = await supabase
     .from('user_profiles')
     .select('master_password_hash')
@@ -25,8 +25,8 @@ export async function validateMasterPassword(userId: string, masterPassword: str
 }
 
 export async function createUserProfile(userId: string, fullName: string, masterPasswordHash: string): Promise<Profile | null> {
-  const supabase = createSupabaseServerClient();
-  const { data, error } = await supabase
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase  
     .from('user_profiles')
     .insert({
       id: userId,
@@ -45,7 +45,7 @@ export async function createUserProfile(userId: string, fullName: string, master
 }
 
 export async function updateLastLogin(userId: string): Promise<void> {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from('user_profiles')
     .update({ updated_at: new Date().toISOString() })

@@ -7,16 +7,20 @@ import {
   Lock, 
   ArrowRight,
   User,
-  Loader2, // Added missing import
+  Loader2,
+  CheckCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 import { PasswordInput } from './PasswordInput';
 import { PasswordRequirements } from './PasswordRequirements';
 
 export function RegisterForm() {
   const { register } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,25 +29,37 @@ export function RegisterForm() {
     masterPassword: '',
     confirmMasterPassword: ''
   });
-  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isEmailSent, setIsEmailSent] = useState(false);
+
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     // Client-side validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: "Passwords do not match",
+      });
       return;
     }
     if (formData.masterPassword !== formData.confirmMasterPassword) {
-      setError('Master passwords do not match');
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: "Master passwords do not match",
+      });
       return;
     }
     if (!acceptedTerms) {
-      setError('Please accept the terms and conditions');
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: "Please accept the terms and conditions",
+      });
       return;
     }
 
@@ -60,16 +76,25 @@ export function RegisterForm() {
         throw new Error(response.error.message);
       }
 
-      // Show success message if data exists
-      if (response.data?.message) {
-        console.log('Registration successful:', response.data.message);
-      }
+      // Show success message
+      toast({
+        title: "Registration Successful",
+        description: response.data?.message || "Please check your email to verify your account.",
+      });
       
-      // Redirect to email verification page or dashboard
-      router.push('/auth/verify-email');
-      
+ // Show success state
+      setIsEmailSent(true);
+      toast({
+        title: "Registration Successful",
+        description:
+          "Please check your email and verify your account before logging in.",
+      });      
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: err instanceof Error ? err.message : 'An unknown error occurred.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -78,12 +103,74 @@ export function RegisterForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (error) setError('');
   };
 
   const onSwitchToLogin = () => {
     router.push('/login');
   };
+
+  const resendEmail = () => {
+    setIsEmailSent(false);
+  };
+
+  if (isEmailSent) {
+    return (
+      <div className="w-full max-w-md">
+        {/* Success Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl mb-4 shadow-lg">
+            <CheckCircle className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent mb-2">
+            Verify Your Email
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400">
+            We’ve sent a verification link to your email
+          </p>
+        </div>
+
+        {/* Success Card */}
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-8 shadow-xl">
+          <div className="text-center space-y-4">
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Verification link sent to:
+              </p>
+              <p className="font-medium text-green-800 dark:text-green-200 mt-1">
+                {formData.email}
+              </p>
+            </div>
+
+            <div className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
+              <p>Please check your inbox and click the link to activate your account.</p>
+              <p>The link will expire for security reasons.</p>
+            </div>
+
+            <div className="space-y-3 pt-4">
+              <button
+                onClick={resendEmail}
+                className="w-full py-3 px-4 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
+              >
+                Resend Email
+              </button>
+
+              <button
+                onClick={onSwitchToLogin}
+                className="w-full flex items-center justify-center space-x-2 py-3 px-4 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Login</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
+          <p>Didn’t receive the email? Check your spam folder</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-md">
@@ -112,6 +199,7 @@ export function RegisterForm() {
             disabled={isSubmitting} 
           />
           <PasswordRequirements password={formData.password} />
+
           <PasswordInput 
             name="confirmPassword"
             placeholder="Confirm your password"
@@ -126,7 +214,7 @@ export function RegisterForm() {
             onChange={handleInputChange}
             disabled={isSubmitting}
           />
-          <PasswordRequirements password={formData.masterPassword} />
+          <PasswordRequirements password={formData.masterPassword} isMaster={true} />
           <PasswordInput
             name="confirmMasterPassword"
             placeholder="Confirm your master password"
@@ -134,12 +222,6 @@ export function RegisterForm() {
             onChange={handleInputChange}
             disabled={isSubmitting}
           />
-
-          {error && (
-            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-            </div>
-          )}
 
           <TermsCheckbox checked={acceptedTerms} onChange={setAcceptedTerms} disabled={isSubmitting} />
 

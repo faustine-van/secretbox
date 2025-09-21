@@ -1,5 +1,5 @@
 // lib/server/audit.ts
-import { createSupabaseServerClient } from '@/lib/server/supabase';
+import { createSupabaseServiceRoleClient } from '@/lib/server/supabase';
 
 import type { Database } from '@/types/supabase';
 
@@ -17,7 +17,7 @@ export async function auditLog(
   metadata: Record<string, any> = {}
 ): Promise<void> {
   try {
-    const supabase = await createSupabaseServerClient();  
+    const supabase = await createSupabaseServiceRoleClient();  
     
     // Extract IP address from request headers
     const ip = getIpAddress(request);
@@ -66,7 +66,7 @@ export async function audit(
   }
 ): Promise<void> {
   try {
-    const supabase = await createSupabaseServerClient();
+    const supabase = await createSupabaseServiceRoleClient();
     const { ip, userAgent, ...eventData } = event;
     
     const riskScore = calculateRiskScore(event.action, ip || '');
@@ -78,7 +78,7 @@ export async function audit(
       metadata: {
         ...eventData.metadata,
         risk_score: riskScore,
-      }
+      },
     };
 
     const { error } = await supabase

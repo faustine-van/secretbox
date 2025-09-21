@@ -28,12 +28,10 @@ export function LoginForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showMasterPassword, setShowMasterPassword] = useState(false);
-  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setIsSubmitting(true);
 
     try {
@@ -52,7 +50,6 @@ export function LoginForm() {
       // Move to master password step
       setStep('master-password');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
       // Show error toast for login failure
       toast({
         variant: "destructive",
@@ -66,7 +63,6 @@ export function LoginForm() {
 
   const handleMasterPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setIsSubmitting(true);
 
     try {
@@ -84,7 +80,6 @@ export function LoginForm() {
       
       router.push('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Master password verification failed');
       // Show error toast for master password verification failure
       toast({
         variant: "destructive",
@@ -99,16 +94,19 @@ export function LoginForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (error) setError('');
   };
 
   const onSwitchToRegister = () => {
     router.push('/register');
   };
 
+  // switch to forget-password
+  const onSwitchToForgetPassword = () => {
+    router.push('/forget-password');
+  };
+
   const goBackToCredentials = () => {
     setStep('credentials');
-    setError('');
     // Show success toast for going back to credentials step
     toast({
       title: "Credentials Step",
@@ -193,13 +191,6 @@ export function LoginForm() {
               </div>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-              </div>
-            )}
-
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
               <label className="flex items-center">
@@ -214,6 +205,7 @@ export function LoginForm() {
                 type="button"
                 className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                 disabled={isSubmitting}
+                onClick={onSwitchToForgetPassword}
               >
                 Forgot password?
               </button>
@@ -273,13 +265,6 @@ export function LoginForm() {
                 </button>
               </div>
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-              </div>
-            )}
 
             {/* Action Buttons */}
             <div className="space-y-3">

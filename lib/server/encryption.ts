@@ -1,7 +1,7 @@
 
 import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
-import { auditEncryption } from '@/lib/server/audit';
+import { audit } from '@/lib/server/audit';
 import { EncryptionResult } from '@/types/supabase';
 
 const ivLength = 16;
@@ -34,10 +34,30 @@ export async function encrypt(plaintext: string, secretKey: string): Promise<Enc
       salt: salt.toString('hex'),
     };
 
-    await auditEncryption({ action: 'encrypt', success: true, duration: Date.now() - startTime });
+    await audit({
+      action: 'encrypt',
+      success: true,
+      duration: Date.now() - startTime,
+      user_id: secretKey,
+      resource_type: 'key',
+      resource_id: null,
+      ip_address: null,
+      user_agent: null,
+      metadata: {},
+    });
     return result;
   } catch (error) {
-    await auditEncryption({ action: 'encrypt', success: false, duration: Date.now() - startTime, error: error as Error });
+    await audit({
+      action: 'encrypt',
+      success: false,
+      duration: Date.now() - startTime,
+      user_id: secretKey,
+      resource_type: 'key',
+      resource_id: null,
+      ip_address: null,
+      user_agent: null,
+      metadata: { error: (error as Error).message },
+    });
     throw new Error('Encryption failed.');
   }
 }
@@ -61,10 +81,30 @@ export async function decrypt(encryptedValue: string, iv: string, authTag: strin
 
     const decrypted = Buffer.concat([decipher.update(Buffer.from(encryptedValue, 'hex')), decipher.final()]);
 
-    await auditEncryption({ action: 'decrypt', success: true, duration: Date.now() - startTime });
+    await audit({
+      action: 'decrypt',
+      success: true,
+      duration: Date.now() - startTime,
+      user_id: secretKey,
+      resource_type: 'key',
+      resource_id: null,
+      ip_address: null,
+      user_agent: null,
+      metadata: {},
+    });
     return decrypted.toString('utf8');
   } catch (error) {
-    await auditEncryption({ action: 'decrypt', success: false, duration: Date.now() - startTime, error: error as Error });
-    throw new Error('Decryption failed. Invalid authentication tag.');
+    await audit({
+      action: 'decrypt',
+      success: false,
+      duration: Date.now() - startTime,
+      user_id: secretKey,
+      resource_type: 'key',
+      resource_id: null,
+      ip_address: null,
+      user_agent: null,
+      metadata: { error: (error as Error).message },
+    });
+    throw new Error(`Decryption failed: ${(error as Error).message}`);
   }
 }

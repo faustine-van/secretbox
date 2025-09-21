@@ -4,18 +4,18 @@ import { KeySearchSchema } from '@/lib/validations';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const supabase = await createSupabaseServerClient();
+  const { data: { user: session } } = await supabase.auth.getUser();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
   const { query, collectionId, type, sortBy, page = 1 } = KeySearchSchema.parse({
-    query: searchParams.get('query'),
-    collectionId: searchParams.get('collectionId'),
-    type: searchParams.get('type'),
-    sortBy: searchParams.get('sortBy'),
+    query: searchParams.get('query') ?? undefined,
+    collectionId: searchParams.get('collectionId') ?? undefined,
+    type: searchParams.get('type') ?? undefined,
+    sortBy: searchParams.get('sortBy') ?? undefined,
     page: searchParams.get('page') ? parseInt(searchParams.get('page') as string, 10) : 1,
   });
 
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   let queryBuilder = supabase
     .from('keys')
     .select('*', { count: 'exact' })
-    .eq('user_id', session.user.id);
+    .eq('user_id', session.id);
 
   if (query) {
     queryBuilder = queryBuilder.textSearch('name', query, { type: 'websearch' });

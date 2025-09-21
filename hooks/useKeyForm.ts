@@ -6,12 +6,12 @@ import { KeyFormData } from '@/types/supabase';
 import { z } from 'zod';
 
 export function useKeyForm(defaultValues?: KeyFormData) {
-  const form = useForm<z.infer<typeof CreateKeySchema>>({
+  const form = useForm<KeyFormData>({
     resolver: zodResolver(CreateKeySchema),
     defaultValues: defaultValues || {
       name: '',
       value: '',
-      collectionId: '',
+      collection_id: '',
       type: 'secret',
     },
   });

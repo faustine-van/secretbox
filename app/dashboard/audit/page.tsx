@@ -1,12 +1,11 @@
-import React from 'react';
+"use client";
 
-export default function AuditPage() {
-  return (
-    <div className="text-center py-16">
-      <h1 className="text-4xl font-bold">Audit Logs</h1>
-      <p className="text-lg text-slate-600 dark:text-slate-400 mt-4">
-        Audit log functionality is coming soon.
-      </p>
-    </div>
-  );
-}
+import React from 'react';
+import { AuditLogViewer } from '@/components/audit/AuditLogViewer';
+import { FileText } from 'lucide-react';
+
+const AuditPage: React.FC = () => {
+  return <AuditLogViewer />;
+};
+
+export default AuditPage;

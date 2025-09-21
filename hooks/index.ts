@@ -1,3 +1,0 @@
-// hooks/index.ts
-
-export {};

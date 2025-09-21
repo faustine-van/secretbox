@@ -5,8 +5,9 @@ import { audit } from '@/lib/server/audit';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+
+  const supabase = await createSupabaseServerClient();
+  const { data: { user: session } } = await supabase.auth.getUser();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -14,7 +15,7 @@ export async function GET(request: Request) {
   const { data: collections, error } = await supabase
     .from('collections')
     .select('*, keys(count)')
-    .eq('user_id', session.user.id);
+    .eq('user_id', session.id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -24,15 +25,15 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const supabase = await createSupabaseServerClient();
+  const { data: { user: session } } = await supabase.auth.getUser();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { name, description, color, icon } = await request.json();
+  const { name, description } = await request.json();
 
-  const { error: validationError } = CreateCollectionSchema.safeParse({ name, description, color, icon });
+  const { error: validationError } = CreateCollectionSchema.safeParse({ name, description });
   if (validationError) {
     return NextResponse.json({ error: validationError.flatten() }, { status: 400 });
   }
@@ -42,9 +43,7 @@ export async function POST(request: Request) {
     .insert({
       name,
       description,
-      color,
-      icon,
-      user_id: session.user.id,
+      user_id: session.id,
     })
     .select()
     .single();
@@ -53,7 +52,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
 
-  await audit({ action: 'create_collection', success: true, duration: 0, user_id: session.user.id, resource_id: newCollection.id });
+  await audit({ action: 'create_collection', success: true, duration: 0, user_id: session.id, resource_id: newCollection.id, resource_type: 'collection', ip_address: request.headers.get('x-forwarded-for'), user_agent: request.headers.get('user-agent'), metadata: {} });
 
   return NextResponse.json(newCollection);
 }

@@ -17,15 +17,15 @@ export function generateKeyId(): string {
   return `key_${Math.random().toString(36).substr(2, 9)}`;
 }
 
-export function isKeyExpired(key: Key): boolean {
-  if (!key.expires_at) return false;
-  return new Date(key.expires_at) < new Date();
-}
-
 export function sortKeys(keys: Key[], sortBy: keyof Key = 'created_at'): Key[] {
   return [...keys].sort((a, b) => {
-    if (a[sortBy] < b[sortBy]) return -1;
-    if (a[sortBy] > b[sortBy]) return 1;
+    if (!a || !b) return 0;
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
+    if (aValue === null || aValue === undefined) return 1;
+    if (bValue === null || bValue === undefined) return -1;
+    if (aValue < bValue) return -1;
+    if (aValue > bValue) return 1;
     return 0;
   });
 }

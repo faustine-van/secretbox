@@ -3,7 +3,10 @@ import { z } from 'zod';
 export const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1, { message: 'Password is required' }),
-  masterPassword: z.string().min(1, { message: 'Master password is required' }),
+  masterPassword: z.string()
+    .min(6, { message: 'Master password must be at least 6 characters' })
+    .max(128, { message: 'Master password must be less than 128 characters' })
+    .optional(), // Optional for first-step login  
 });
 
 export const RegisterSchema = z.object({
@@ -45,17 +48,30 @@ export const SessionSchema = z.object({
 export const CreateKeySchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   value: z.string().min(1, { message: "Value is required" }),
-  collectionId: z.string().uuid(),
-  type: z.enum(["api_key", "secret", "token", "credential"]),
-  expiresAt: z.date().optional(),
+  collectionId: z.preprocess((arg) => {
+    if (!arg || arg === '') return undefined;
+    return arg;
+  }, z.string().uuid().optional()),
+  type: z.enum(['api_key', 'database', 'oauth', 'webhook', 'certificate', 'token', 'password', 'other']),
+  description: z.string().max(500).optional(),
+  expiresAt: z.preprocess((arg) => {
+    if (!arg || arg === '') return undefined;
+    return arg;
+  }, z.coerce.date().optional()),
 });
 
 export const UpdateKeySchema = z.object({
   name: z.string().min(1, { message: "Name is required" }).optional(),
   value: z.string().min(1, { message: "Value is required" }).optional(),
-  collectionId: z.string().uuid().optional(),
+  collectionId: z.preprocess((arg) => {
+    if (!arg || arg === '') return undefined;
+    return arg;
+  }, z.string().uuid().optional()),
   type: z.enum(["api_key", "secret", "token", "credential"]).optional(),
-  expiresAt: z.date().optional(),
+  expiresAt: z.preprocess((arg) => {
+    if (!arg || arg === '') return undefined;
+    return arg;
+  }, z.coerce.date().optional()),
 });
 
 export const KeySearchSchema = z.object({
@@ -72,15 +88,19 @@ export const KeyRevealSchema = z.object({
 });
 
 export const CreateCollectionSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
-  description: z.string().optional(),
-  color: z.string().optional(),
-  icon: z.string().optional(),
+  name: z.string().min(1, 'Collection name is required').max(50, 'Name too long'),
+  description: z.string().max(200, 'Description too long').optional(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format').default('#10b981'),
+  icon: z.enum(['folder', 'lock', 'server', 'globe', 'database', 'cloud', 'shield', 'users', 'settings']).default('folder'),
+  category: z.enum(['production', 'staging', 'development', 'testing', 'personal', 'shared']).optional(),
+  tags: z.string().optional(),
 });
 
 export const UpdateCollectionSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }).optional(),
-  description: z.string().optional(),
-  color: z.string().optional(),
-  icon: z.string().optional(),
+  name: z.string().min(1, 'Collection name is required').max(50, 'Name too long').optional(),
+  description: z.string().max(200, 'Description too long').optional(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format').optional(),
+  icon: z.enum(['folder', 'lock', 'server', 'globe', 'database', 'cloud', 'shield', 'users', 'settings']).optional(),
+  category: z.enum(['production', 'staging', 'development', 'testing', 'personal', 'shared']).optional(),
+  tags: z.string().optional(),
 });

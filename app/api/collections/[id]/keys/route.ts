@@ -1,11 +1,10 @@
-
 import { createSupabaseServerClient } from '@/lib/server/supabase';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -13,7 +12,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     .from('keys')
     .select('*')
     .eq('collection_id', params.id)
-    .eq('user_id', session.user.id);
+    .eq('user_id', user.id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -22,10 +21,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
   return NextResponse.json(keys);
 }
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const supabase = createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -35,7 +34,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     .from('keys')
     .update({ collection_id: params.id })
     .in('id', keyIds)
-    .eq('user_id', session.user.id);
+    .eq('user_id', user.id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

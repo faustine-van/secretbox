@@ -11,6 +11,8 @@ CREATE TABLE public.audit_logs (
   ip_address INET,
   user_agent TEXT,
   metadata JSONB,
+  success BOOLEAN DEFAULT TRUE,
+  duration INTEGER,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
