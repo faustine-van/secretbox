@@ -3,7 +3,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { Key } from '@/types/supabase';
 import { useToast } from './use-toast';
 
-type KeyCreate = Omit<Key, 'id' | 'created_at' | 'user_id' | 'iv' | 'auth_tag'> & { value: string };
+type KeyCreate = {
+  name: string;
+  value: string;
+  collection_id: string;
+  key_type: string;
+  expires_at?: string;
+  description?: string;
+};
 
 export function useKeys(collectionId?: string) {
   const [keys, setKeys] = useState<Key[]>([]);

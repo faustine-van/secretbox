@@ -20,12 +20,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
-  if (!user) { // if (loading || !user) { 
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <LoadingSpinner />
       </div>
     );
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (

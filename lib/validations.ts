@@ -45,20 +45,24 @@ export const SessionSchema = z.object({
   loggedInAt: z.number(),
 });
 
+
 export const CreateKeySchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   value: z.string().min(1, { message: "Value is required" }),
-  collectionId: z.preprocess((arg) => {
-    if (!arg || arg === '') return undefined;
-    return arg;
-  }, z.string().uuid().optional()),
-  type: z.enum(['api_key', 'database', 'oauth', 'webhook', 'certificate', 'token', 'password', 'other']),
+  key_type: z.enum(['api_key', 'database', 'token', 'credential', 'other']),
+  collectionId: z.preprocess((val) => {
+    if (!val || val === '') return undefined;
+    return String(val);
+  }, z.string().optional()),
+
   description: z.string().max(500).optional(),
-  expiresAt: z.preprocess((arg) => {
-    if (!arg || arg === '') return undefined;
-    return arg;
-  }, z.coerce.date().optional()),
+
+  expiresAt: z.preprocess((val) => {
+    if (!val || val === '') return undefined;
+    return new Date(val as string);
+  }, z.date().optional()),
 });
+
 
 export const UpdateKeySchema = z.object({
   name: z.string().min(1, { message: "Name is required" }).optional(),
@@ -67,7 +71,7 @@ export const UpdateKeySchema = z.object({
     if (!arg || arg === '') return undefined;
     return arg;
   }, z.string().uuid().optional()),
-  type: z.enum(["api_key", "secret", "token", "credential"]).optional(),
+  key_type: z.enum(["api_key", "secret", "token", "credential"]).optional(),
   expiresAt: z.preprocess((arg) => {
     if (!arg || arg === '') return undefined;
     return arg;

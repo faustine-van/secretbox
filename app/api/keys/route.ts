@@ -37,9 +37,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { name, value, collectionId, type, expiresAt, description } = await request.json();
+  const { name, value, collectionId, key_type, expiresAt, description } = await request.json();
 
-  const { error: validationError } = CreateKeySchema.safeParse({ name, value, collectionId, type, expiresAt, description });
+  const { error: validationError } = CreateKeySchema.safeParse({ name, value, collectionId, key_type, expiresAt, description });
   if (validationError) {
     return NextResponse.json({ error: validationError.flatten() }, { status: 400 });
   }
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       collection_id: collectionId,
       description,
       user_id: session.id,
-      key_type: type,
+      key_type: key_type,
       expires_at: expiresAt,
     })
     .select()

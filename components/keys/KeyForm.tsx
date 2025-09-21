@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -10,27 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
 import { CreateKeySchema } from '@/lib/validations';
 import { 
-  Loader2, 
-  Key, 
-  Tag, 
-  Folder, 
-  FileText, 
-  Eye, 
-  EyeOff, 
-  AlertCircle, 
-  Calendar,
-  Shield,
-  Zap,
-  Clock,
-  Info,
-  CheckCircle2,
-  Lock,
-  Server,
-  Globe,
-  Database,
-  Webhook,
-  Users,
-  Settings
+  Loader2, Key, Tag, Folder, FileText, Eye, EyeOff, AlertCircle, Calendar,
+  Shield, Zap, Clock, Info, CheckCircle2, Lock, Server, Globe, Database, Webhook, Users, Settings
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collection } from '@/types/supabase';
@@ -40,116 +21,74 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 
 interface KeyFormProps {
-  onSubmit: (values: z.infer<typeof CreateKeySchema>) => void;
-  onCancel: () => void;
+  onSubmit: SubmitHandler<z.infer<typeof CreateKeySchema>>;
   isSubmitting: boolean;
   collections?: Collection[];
   initialData?: Partial<z.infer<typeof CreateKeySchema>> & { id?: string };
   formError?: string | null;
+  onCancel?: () => void;
 }
 
 const KEY_TYPES = [
-  { 
-    value: 'api_key', 
-    label: 'API Key', 
-    description: 'REST API keys and access tokens',
-    icon: Globe,
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-  },
-  { 
-    value: 'database', 
-    label: 'Database', 
-    description: 'Database connection strings and credentials',
-    icon: Database,
-    color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-  },
-  { 
-    value: 'oauth', 
-    label: 'OAuth', 
-    description: 'OAuth tokens and authentication secrets',
-    icon: Users,
-    color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'
-  },
-  { 
-    value: 'webhook', 
-    label: 'Webhook', 
-    description: 'Webhook signing secrets and endpoints',
-    icon: Webhook,
-    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
-  },
-  { 
-    value: 'certificate', 
-    label: 'Certificate', 
-    description: 'SSL certificates and private keys',
-    icon: Shield,
-    color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-  },
-  { 
-    value: 'token', 
-    label: 'Access Token', 
-    description: 'Generic access tokens and bearer tokens',
-    icon: Key,
-    color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400'
-  },
-  { 
-    value: 'password', 
-    label: 'Password', 
-    description: 'Passwords and passphrases',
-    icon: Lock,
-    color: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400'
-  },
-  { 
-    value: 'other', 
-    label: 'Other', 
-    description: 'Other sensitive information',
-    icon: Settings,
-    color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
-  },
+  { value: 'api_key', label: 'API Key', description: 'REST API keys and access tokens', icon: Globe, color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' },
+  { value: 'database', label: 'Database', description: 'Database connection strings and credentials', icon: Database, color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' },
+  { value: 'oauth', label: 'OAuth', description: 'OAuth tokens and authentication secrets', icon: Users, color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' },
+  { value: 'webhook', label: 'Webhook', description: 'Webhook signing secrets and endpoints', icon: Webhook, color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' },
+  { value: 'certificate', label: 'Certificate', description: 'SSL certificates and private keys', icon: Shield, color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' },
+  { value: 'token', label: 'Access Token', description: 'Generic access tokens and bearer tokens', icon: Key, color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400' },
+  { value: 'password', label: 'Password', description: 'Passwords and passphrases', icon: Lock, color: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400' },
+  { value: 'other', label: 'Other', description: 'Other sensitive information', icon: Settings, color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' },
 ];
 
-export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], initialData, formError }: KeyFormProps) {
+export function KeyForm({
+  onSubmit,
+  isSubmitting,
+  collections = [],
+  initialData,
+  formError,
+  onCancel = () => {},
+}: KeyFormProps) {
   const [showValue, setShowValue] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  
-  // Safe default value handling
+
   const getDefaultCollectionId = () => {
-    if (initialData?.collectionId) {
-      return initialData.collectionId;
-    }
-    if (collections && collections.length > 0 && collections[0]?.id) {
-      return collections[0].id;
-    }
-    return '';
+    if (initialData?.collectionId) return initialData.collectionId;
+    if (collections.length > 0 && collections[0]?.id) return collections[0].id;
+    return undefined;
   };
-  
+
   const form = useForm<z.infer<typeof CreateKeySchema>>({
+    
     resolver: zodResolver(CreateKeySchema),
     defaultValues: {
       name: initialData?.name || '',
-      value: initialData?.value || '',
+      value: '',
       collectionId: getDefaultCollectionId(),
-      type: initialData?.type || 'api_key',
+      key_type: initialData?.key_type || 'api_key',
       description: initialData?.description || '',
-      expiresAt: initialData?.expiresAt ? new Date(initialData.expiresAt).toISOString().split('T')[0] : '',
+      expiresAt: initialData?.expiresAt 
+        ? new Date(initialData.expiresAt) 
+        : undefined,
     },
   });
 
-  const selectedType = form.watch('type');
-  const keyTypeInfo = KEY_TYPES.find(type => type.value === selectedType);
+  const selectedType = form.watch('key_type');
+  const keyTypeInfo = KEY_TYPES.find((type) => type.value === selectedType);
   const watchedName = form.watch('name');
 
   const steps = [
     { id: 1, name: 'Basic Info', description: 'Key details and type' },
     { id: 2, name: 'Organization', description: 'Collection and settings' },
-    { id: 3, name: 'Secret Value', description: 'Secure key storage' }
+    { id: 3, name: 'Secret Value', description: 'Secure key storage' },
   ];
+
+  const handleFormSubmit: SubmitHandler<z.infer<typeof CreateKeySchema>> = (values) => onSubmit(values);
 
   return (
     <div className="max-h-[80vh] overflow-y-auto scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-800 dark:scrollbar-thumb-slate-600">
       <div className="space-y-6 p-1">
-        {/* Error Alert */}
         {formError && (
-          <Alert variant="destructive" className="bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800">
+          <Alert className="bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-red-800 dark:text-red-200">{formError}</AlertDescription>
           </Alert>
@@ -160,29 +99,18 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
-                <div className={`
-                  flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium
-                  ${currentStep >= step.id 
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                  currentStep >= step.id 
                     ? 'bg-blue-600 dark:bg-blue-500 text-white' 
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-                  }
-                `}>
-                  {currentStep > step.id ? (
-                    <CheckCircle2 className="w-4 h-4" />
-                  ) : (
-                    step.id
-                  )}
+                }`}>
+                  {currentStep > step.id ? <CheckCircle2 className="w-4 h-4" /> : step.id}
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{step.name}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{step.description}</p>
                 </div>
-                {index < steps.length - 1 && (
-                  <div className={`
-                    w-12 h-0.5 mx-4
-                    ${currentStep > step.id ? 'bg-blue-600 dark:bg-blue-500' : 'bg-slate-200 dark:bg-slate-700'}
-                  `} />
-                )}
+                {index < steps.length - 1 && <div className={`w-12 h-0.5 mx-4 ${currentStep > step.id ? 'bg-blue-600 dark:bg-blue-500' : 'bg-slate-200 dark:bg-slate-700'}`} />}
               </div>
             ))}
           </div>
@@ -190,7 +118,8 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Step 1: Basic Information */}
+
+            {/* Step 1: Basic Info */}
             <Card className="border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50/50 to-indigo-50/30 dark:from-blue-900/10 dark:to-indigo-900/10 shadow-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center text-blue-800 dark:text-blue-200">
@@ -199,13 +128,12 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
                   </div>
                   <div>
                     <h3>Basic Information</h3>
-                    <p className="text-sm font-normal text-blue-600 dark:text-blue-300 mt-1">
-                      Define the key name and type
-                    </p>
+                    <p className="text-sm font-normal text-blue-600 dark:text-blue-300 mt-1">Define the key name and type</p>
                   </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5">
+                {/* Key Name */}
                 <FormField
                   control={form.control}
                   name="name"
@@ -216,11 +144,7 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
                         Key Name *
                       </FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="e.g., GitHub API Token, Stripe Live Key" 
-                          {...field}
-                          className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-200" 
-                        />
+                        <Input {...field} placeholder="e.g., GitHub API Token" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-200" />
                       </FormControl>
                       <FormDescription className="flex items-center text-slate-600 dark:text-slate-400">
                         <Info className="w-3 h-3 mr-1" />
@@ -231,9 +155,10 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
                   )}
                 />
 
+                {/* Key Type */}
                 <FormField
                   control={form.control}
-                  name="type"
+                  name="key_type"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm font-semibold flex items-center text-slate-900 dark:text-slate-100">
@@ -247,22 +172,11 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 max-h-64 overflow-y-auto">
-                          {KEY_TYPES.map((type) => {
-                            const IconComponent = type.icon;
-                            return (
-                              <SelectItem key={type.value} value={type.value} className="py-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700">
-                                <div className="flex items-center space-x-3">
-                                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${type.color}`}>
-                                    <IconComponent className="w-4 h-4" />
-                                  </div>
-                                  <div className="flex flex-col">
-                                    <span className="font-medium">{type.label}</span>
-                                    <span className="text-xs text-slate-500 dark:text-slate-400">{type.description}</span>
-                                  </div>
-                                </div>
-                              </SelectItem>
-                            );
-                          })}
+                          {KEY_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value} className="py-3 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700">
+                              {type.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       {keyTypeInfo && (
@@ -279,6 +193,7 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
                   )}
                 />
 
+                {/* Description */}
                 <FormField
                   control={form.control}
                   name="description"
@@ -289,11 +204,7 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
                         Description (Optional)
                       </FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Describe the purpose of this key, usage notes, or any important context..."
-                          className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 min-h-[100px] resize-none transition-all duration-200" 
-                          {...field} 
-                        />
+                        <Textarea {...field} placeholder="Describe the purpose of this key..." className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 min-h-[100px] resize-none transition-all duration-200" />
                       </FormControl>
                       <FormDescription className="flex items-center text-slate-600 dark:text-slate-400">
                         <Info className="w-3 h-3 mr-1" />
@@ -340,7 +251,7 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectItem value="" className="text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700">
+                            <SelectItem key="standalone-key-option" value="standalone"  className="text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700">
                               <div className="flex items-center">
                                 <Key className="w-4 h-4 mr-2 text-slate-400 dark:text-slate-500" />
                                 <span className="text-slate-500 dark:text-slate-400">Standalone Key (No Collection)</span>
@@ -502,15 +413,17 @@ export function KeyForm({ onSubmit, onCancel, isSubmitting, collections = [], in
             {/* Form Actions */}
             <div className="sticky bottom-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 p-4 -mx-1">
               <div className="flex flex-col sm:flex-row justify-end gap-3">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={onCancel} 
-                  disabled={isSubmitting}
-                  className="w-full sm:w-auto border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-                >
-                  Cancel
-                </Button>
+                {onCancel && (
+                                    <Button 
+                                      type="button" 
+                                      variant="outline" 
+                                      onClick={onCancel} 
+                                      disabled={isSubmitting}
+                                      className="w-full sm:w-auto border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  )}
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}

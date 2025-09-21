@@ -1,3 +1,0 @@
-// context/index.ts
-
-export {};

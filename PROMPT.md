@@ -294,7 +294,7 @@ After this step, I should have:
 ```
 
 
-Step 5: Authentication system (Supabase Auth + Next.js middleware)
+## Step 5: Authentication system (Supabase Auth + Next.js middleware)
 ```
 You are helping me build SecretBox, a secure key management application. We've completed Steps 1-4 (Setup + Database + Encryption) and now need to implement the complete authentication system.
 

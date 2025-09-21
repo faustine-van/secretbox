@@ -1,38 +1,38 @@
-
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   public: {
     Tables: {
-      audit_logs: {
-        Row: AuditEvent;
-        Insert: Omit<AuditEvent, 'id' | 'created_at'>;
-        Update: Partial<Omit<AuditEvent, 'id' | 'created_at'>>;
-      };
-      profiles: {
+      user_profiles: {
         Row: {
           id: string;
-          updated_at: string | null;
-          username: string | null;
           full_name: string | null;
           avatar_url: string | null;
-          website: string | null;
+          theme_preference: string | null;
+          master_password_hash: string | null;
+          two_factor_enabled: boolean;
+          created_at: string;
+          updated_at: string | null;
         };
         Insert: {
           id: string;
-          updated_at?: string | null;
-          username?: string | null;
           full_name?: string | null;
           avatar_url?: string | null;
-          website?: string | null;
+          theme_preference?: string | null;
+          master_password_hash?: string | null;
+          two_factor_enabled?: boolean;
+          created_at?: string;
+          updated_at?: string | null;
         };
         Update: {
           id?: string;
-          updated_at?: string | null;
-          username?: string | null;
           full_name?: string | null;
           avatar_url?: string | null;
-          website?: string | null;
+          theme_preference?: string | null;
+          master_password_hash?: string | null;
+          two_factor_enabled?: boolean;
+          created_at?: string;
+          updated_at?: string | null;
         };
       };
       collections: {
@@ -41,35 +41,50 @@ export type Database = {
           user_id: string;
           name: string;
           description: string | null;
+          color: string | null;
+          icon: string | null;
+          is_archived: boolean;
+          sort_order: number | null;
           created_at: string;
+          updated_at: string | null;
         };
         Insert: {
           id?: string;
           user_id: string;
           name: string;
           description?: string | null;
+          color?: string | null;
+          icon?: string | null;
+          is_archived?: boolean;
+          sort_order?: number | null;
           created_at?: string;
+          updated_at?: string | null;
         };
         Update: {
           id?: string;
           user_id?: string;
           name?: string;
           description?: string | null;
+          color?: string | null;
+          icon?: string | null;
+          is_archived?: boolean;
+          sort_order?: number | null;
           created_at?: string;
+          updated_at?: string | null;
         };
       };
       keys: {
         Row: {
           id: string;
-          collection_id: string;
           user_id: string;
+          collection_id: string | null;
           name: string;
           encrypted_value: string;
-          iv: string; // Changed from encryption_iv
+          iv: string;
           auth_tag: string;
-          salt: string; // Added this field
+          salt: string;
           description: string | null;
-          key_type: string;
+          key_type: key_type | null;
           tags: string[] | null;
           url: string | null;
           username: string | null;
@@ -82,106 +97,112 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          collection_id: string;
           user_id: string;
+          collection_id?: string | null;
           name: string;
-          value: string;
+          encrypted_value: string;
           iv: string;
           auth_tag: string;
-          created_at?: string;
-          key_type: string;
+          salt: string;
+          description?: string | null;
+          key_type?: key_type | null;
+          tags?: string[] | null;
+          url?: string | null;
+          username?: string | null;
+          expires_at?: string | null;
+          is_favorite?: boolean;
           last_accessed_at?: string | null;
+          access_count?: number;
+          created_at?: string;
+          updated_at?: string | null;
         };
         Update: {
           id?: string;
-          collection_id?: string;
           user_id?: string;
+          collection_id?: string | null;
           name?: string;
-          value?: string;
+          encrypted_value?: string;
           iv?: string;
           auth_tag?: string;
-          created_at?: string;
-          key_type?: string;
+          salt?: string;
+          description?: string | null;
+          key_type?: key_type | null;
+          tags?: string[] | null;
+          url?: string | null;
+          username?: string | null;
+          expires_at?: string | null;
+          is_favorite?: boolean;
           last_accessed_at?: string | null;
+          access_count?: number;
+          created_at?: string;
+          updated_at?: string | null;
+        };
+      };
+      audit_logs: {
+        Row: {
+          id: number;
+          user_id: string | null;
+          action: string;
+          resource_type: string | null;
+          resource_id: string | null;
+          ip_address: any | null; // INET type
+          user_agent: string | null;
+          metadata: Json | null;
+          success: boolean;
+          duration: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id?: string | null;
+          action: string;
+          resource_type?: string | null;
+          resource_id?: string | null;
+          ip_address?: any | null;
+          user_agent?: string | null;
+          metadata?: Json | null;
+          success?: boolean;
+          duration?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          user_id?: string | null;
+          action?: string;
+          resource_type?: string | null;
+          resource_id?: string | null;
+          ip_address?: any | null;
+          user_agent?: string | null;
+          metadata?: Json | null;
+          success?: boolean;
+          duration?: number | null;
+          created_at?: string;
         };
       };
     };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      [_ in never]: never;
-    };
+    Views: { [_in in never]: never };
+    Functions: { [_in in never]: never };
     Enums: {
-      [_ in never]: never;
+      key_type: "api_key" | "secret" | "token" | "credential";
     };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-    
+    CompositeTypes: { [_in in never]: never };
   };
 };
 
-export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type key_type = Database["public"]["Enums"]["key_type"];
+
+export type Profile = Database['public']['Tables']['user_profiles']['Row'];
 export type Collection = Database['public']['Tables']['collections']['Row'];
 export type Key = Database['public']['Tables']['keys']['Row'];
-
-export interface ApiResponse<T> {
-  data: T | null;
-  error: ApiError | null;
-}
-
-export interface ApiError {
-  message: string;
-  status?: number;
-}
-
-export interface EncryptionResult {
-  encryptedValue: string;
-  iv: string;
-  authTag: string;
-  salt: string;
-}
-
-export interface CryptoError extends Error {
-  code?: string;
-}
-
-export interface AuditEvent {
-  id: number;
-  user_id: string | null;
-  action: string;
-  resource_type: string | null;
-  resource_id: string | null;
-  ip_address: string | null;
-  user_agent: string | null;
-  metadata: Record<string, any>;
-  created_at: string;
-  success: boolean;
-  duration: number;
-  error?: Error;
-}
-
-export type KeyType = "api_key" | "secret" | "token" | "credential";
+export type AuditEvent = Database['public']['Tables']['audit_logs']['Row'];
 
 export interface KeyFormData {
   name: string;
   value: string;
   collectionId: string;
-  type: KeyType;
+  key_type: key_type;
   expiresAt?: Date;
-}
-
-export interface KeySearchParams {
-  query?: string;
-  collectionId?: string;
-  type?: KeyType;
-  sortBy?: "name" | "createdAt" | "lastAccessedAt";
-  page?: number;
-}
-
-export interface KeyRevealRequest {
-  masterPassword: string;
+  
 }
 
 export interface CollectionFormData {
@@ -189,4 +210,13 @@ export interface CollectionFormData {
   description?: string;
   color?: string;
   icon?: string;
+  is_archived?: boolean;
+  
+}
+
+export interface EncryptionResult {
+  encryptedValue: string;
+  iv: string;
+  authTag: string;
+  salt: string;
 }

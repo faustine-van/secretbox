@@ -1,82 +1,63 @@
-import { CollectionManager } from '@/components/collections/CollectionManager';
-import { Card, CardContent } from '@/components/ui/card';
-import { FolderKanban, Shield, Users, Zap } from 'lucide-react';
+"use client";
+
+import { useState } from 'react';
+import { useCollections } from '@/hooks/useCollections';
+import { CollectionList } from '@/components/collections/CollectionList';
+import { KeyList } from '@/components/keys/KeyList';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import { CollectionForm } from '@/components/collections/CollectionForm';
+import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/modal';
+import { Collection } from '@/types/supabase';
 
 export default function CollectionsPage() {
+  const { collections, isLoading: collectionsLoading, createCollection, deleteCollection } = useCollections();
+  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+  
+  const [isCollectionFormOpen, setIsCollectionFormOpen] = useState(false);
+
+  const handleCreateCollection = async (data: { name: string, description?: string }) => {
+    await createCollection(data);
+    setIsCollectionFormOpen(false);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50/30 to-cyan-50/20 dark:from-slate-950 dark:via-emerald-950/30 dark:to-teal-950/20">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Hero Section */}
-        <div className="mb-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="relative">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <FolderKanban className="w-8 h-8 text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <Shield className="w-3 h-3 text-white" />
-              </div>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900 p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-4rem)]">
+        {/* Collections Column */}
+        <div className="lg:col-span-1 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">Collections</h2>
+            <Button variant="ghost" size="sm" onClick={() => setIsCollectionFormOpen(true)}>
+              <PlusCircle className="h-5 w-5" />
+            </Button>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 via-emerald-600 to-teal-600 dark:from-slate-200 dark:via-emerald-400 dark:to-teal-400 bg-clip-text text-transparent mb-2">
-            Collections Hub
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Organize your secrets into logical groups for better management and team collaboration
-          </p>
+          <div className="flex-1 overflow-y-auto">
+            <CollectionList
+              collections={collections}
+              selectedCollection={selectedCollection}
+              onSelectCollection={setSelectedCollection}
+              onDeleteCollection={deleteCollection}
+              isLoading={collectionsLoading}
+            />
+          </div>
         </div>
 
-        {/* Features Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Organized</p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">5</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Collections</p>
-                </div>
-                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                  <FolderKanban className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Team Access</p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">8</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Members</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Quick Access</p>
-                  <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">2s</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Avg Response</p>
-                </div>
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Keys Column */}
+        <div className="lg:col-span-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col p-4">
+          <KeyList collectionId={selectedCollection?.id} />
         </div>
-
-        {/* Main Content */}
-        <CollectionManager />
       </div>
+
+      {/* Modals */}
+      <Modal open={isCollectionFormOpen} onOpenChange={setIsCollectionFormOpen}>
+        <ModalContent>
+          <ModalHeader>
+            <ModalTitle>Create Collection</ModalTitle>
+          </ModalHeader>
+          <CollectionForm onSubmit={handleCreateCollection} />
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

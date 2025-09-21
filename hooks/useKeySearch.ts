@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Key } from '@/types/supabase';
 import { useDebounce } from '@/hooks/useDebounce';
 
-export function useKeySearch() {
+export function useKeySearch(collectionId?: string) {
   const [keys, setKeys] = useState<Key[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +15,11 @@ export function useKeySearch() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/keys/search?query=${debouncedQuery}&page=${page}`);
+      let url = `/api/keys/search?query=${debouncedQuery}&page=${page}`;
+      if (collectionId) {
+        url += `&collectionId=${collectionId}`;
+      }
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to search keys');
       }

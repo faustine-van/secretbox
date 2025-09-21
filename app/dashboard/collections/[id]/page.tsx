@@ -60,7 +60,7 @@ export default function CollectionDetailPage() {
 
   const handleCreateKey = async (values: z.infer<typeof CreateKeySchema>) => {
     setIsSubmitting(true);
-    const newKey = await createKey(values);
+    const newKey = await createKey({ ...values, collection_id: collectionId });
     if (newKey) {
       setIsModalOpen(false);
     }
@@ -372,7 +372,6 @@ export default function CollectionDetailPage() {
             </ModalHeader>
             <KeyForm
               onSubmit={handleCreateKey}
-              onCancel={() => setIsModalOpen(false)}
               isSubmitting={isSubmitting}
               collections={[]} // Pass empty since we're in a specific collection
               formError={null}

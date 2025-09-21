@@ -27,8 +27,8 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-export function KeyList() {
-  const { keys, loading, error, count, query, setQuery, searchKeys } = useKeySearch();
+export function KeyList({ collectionId }: { collectionId?: string }) {
+  const { keys, loading, error, count, query, setQuery, searchKeys } = useKeySearch(collectionId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -432,7 +432,6 @@ const handleDeleteKey = async (keyId: string) => {
               onDelete={handleDeleteKey}
               isUpdating={false}
               isDeleting={false}
-              collections={collections}
             />
           ))}
         </div>

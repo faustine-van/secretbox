@@ -32,6 +32,7 @@ interface KeyCardProps {
   onDelete: (keyId: string) => void;
   isUpdating: boolean;
   isDeleting: boolean;
+  
 }
 
 export function KeyCard({ keyData, onUpdate, onDelete, isUpdating, isDeleting }: KeyCardProps) {
@@ -54,15 +55,16 @@ export function KeyCard({ keyData, onUpdate, onDelete, isUpdating, isDeleting }:
     // You might want to show a toast here
   };
 
-  const getKeyTypeColor = (type: string) => {
-    const colors = {
+  const getKeyTypeColor = (type: string | null) => {
+      const colors = {
       'api_key': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-      'database': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-      'oauth': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-      'webhook': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-      'certificate': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+      'secret': 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
+      'token': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
+      'credential': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
       'default': 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-400'
     };
+    if (!type) return colors.default;
+  
     return colors[type as keyof typeof colors] || colors.default;
   };
 
@@ -206,8 +208,14 @@ export function KeyCard({ keyData, onUpdate, onDelete, isUpdating, isDeleting }:
               onSubmit={handleUpdate} 
               onCancel={() => setIsEditModalOpen(false)} 
               isSubmitting={isUpdating}
-              collectionId={keyData.collection_id}
-              initialData={keyData}
+              initialData={{
+                name: keyData.name,
+                value: '', // Don't populate the value for security
+                collectionId: keyData.collection_id || '',
+                key_type: keyData.key_type || 'api_key',
+                description: keyData.description || '',
+                expiresAt: keyData.expires_at ? new Date(keyData.expires_at) : undefined,
+              }}
             />
           </ModalContent>
         </Modal>
@@ -219,15 +227,15 @@ export function KeyCard({ keyData, onUpdate, onDelete, isUpdating, isDeleting }:
           />
         )}
 
-        <ConfirmationDialog  className="bg-white dark:bg-gray-900"
+        <ConfirmationDialog
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={handleDelete}
           title="Delete Key"
           description={`Are you sure you want to delete "${keyData.name}"? This action cannot be undone and will permanently remove the key from your account.`}
           isConfirming={isDeleting}
-          confirmLabel="Delete Key"
-          cancelLabel="Cancel"
+          confirmText="Delete Key"
+          cancelText="Cancel"
         />
       </CardContent>
     </Card>

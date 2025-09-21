@@ -3,8 +3,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { Collection } from '@/types/supabase';
 import { useToast } from './use-toast';
 
-// Assuming a CollectionCreate type exists for the creation payload
-type CollectionCreate = Omit<Collection, 'id' | 'created_at' | 'user_id'>;
+type CollectionCreate = {
+  name: string;
+  description?: string | null;
+  color?: string | null;
+  icon?: string | null;
+};
 
 export function useCollections() {
   const [collections, setCollections] = useState<Collection[]>([]);

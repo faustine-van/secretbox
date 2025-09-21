@@ -11,7 +11,7 @@ export function useKeyForm(defaultValues?: KeyFormData) {
     defaultValues: defaultValues || {
       name: '',
       value: '',
-      collection_id: '',
+      collectionId: '',
       type: 'secret',
     },
   });
