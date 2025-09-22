@@ -15,7 +15,7 @@ const customJestConfig = {
     '^@/hooks/(.*)$': '<rootDir>/hooks/$1',
     '^@/app/(.*)$': '<rootDir>/app/$1',
   },
-  testMatch: ['<rootDir>/__tests__/**/*.test.(ts|tsx)'],
+  testMatch: ['<rootDir>/__tests__/**/*.test.{ts,tsx}'],
   testPathIgnorePatterns: ['<rootDir>/__tests__/db'],
 }
 

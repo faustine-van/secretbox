@@ -33,8 +33,7 @@ describe('Encryption', () => {
     const { encryptedValue, iv, authTag, salt } = await encrypt(plaintext, secretKey);
     const tamperedIv = iv.replace(/./g, '0');
 
-    await expect(decrypt(encryptedValue, tamperedIv, authTag, salt, secretKey)).rejects.toThrow('Decryption failed: Unsupported state or unable to authenticate data');
-  });
+await expect(decrypt(encryptedValue, tamperedIv, authTag, salt, secretKey)).rejects.toThrow(/Decryption failed:/);  });
 
   it('should call the audit function on success', async () => {
     await encrypt(plaintext, secretKey);

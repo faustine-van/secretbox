@@ -15,17 +15,18 @@ describe('Data Integrity', () => {
     const userEmail = `user-${Date.now()}@example.com`;
     const password = 'password123';
 
+    let createdUserId: string | undefined;
     const { data: user, error: userError } = await supabaseAdmin.auth.admin.createUser({ email: userEmail, password, email_confirm: true });
     expect(userError).toBeNull();
     expect(user).toBeDefined();
+    createdUserId = user.user?.id!;
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    const { data: session, error: sessionError } = await supabase.auth.signInWithPassword({ email: userEmail, password });
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);    const { data: session, error: sessionError } = await supabase.auth.signInWithPassword({ email: userEmail, password });
     expect(sessionError).toBeNull();
     expect(session).toBeDefined();
 
-    const authedSupabase = createClient(supabaseUrl, supabaseAnonKey, { global: { headers: { Authorization: `Bearer ${session.session.access_token}` } } });
-
+    const authedSupabase = createClient(supabaseUrl, supabaseAnonKey, { global: { headers: { Authorization: `Bearer ${session.session!.access_token}` } } });
+try{
     // Create a collection
     const { data: collection, error: collectionError } = await authedSupabase
       .from('collections')
@@ -35,8 +36,7 @@ describe('Data Integrity', () => {
     expect(collectionError).toBeNull();
     expect(collection).toBeDefined();
 
-    const { encryptedValue, iv, authTag, salt } = await encrypt('secret', user.user.id);
-
+    const { encryptedValue, iv, authTag, salt } = await encrypt('secret', createdUserId);
     // Create a key in the collection
     const { data: key, error: keyError } = await authedSupabase
       .from('keys')
@@ -60,5 +60,10 @@ describe('Data Integrity', () => {
       .eq('id', key.id);
     expect(deletedKeyError).toBeNull();
     expect(deletedKey).toHaveLength(0);
+    } finally {
+      if (createdUserId) {
+        await supabaseAdmin.auth.admin.deleteUser(createdUserId);
+      }
+   }
   });
 });

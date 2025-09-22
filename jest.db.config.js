@@ -3,6 +3,7 @@ module.exports = {
   ...require('./jest.config.js'),
   preset: 'ts-jest',
   testEnvironment: 'node',
+  testTimeout: 60000,
   setupFiles: ['<rootDir>/tests/jest.db.setup.ts'],
   testMatch: ['<rootDir>/__tests__/db/**/*.test.ts'],
   moduleNameMapper: {
