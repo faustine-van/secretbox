@@ -26,9 +26,11 @@ export function ConfirmationDialog({
   cancelText = "Cancel",
   variant = 'default'
 }: ConfirmationDialogProps) {
+  const descriptionId = React.useId();
+
   return (
     <Modal open={isOpen} onOpenChange={onClose}>
-      <ModalContent className="max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
+      <ModalContent aria-describedby={descriptionId} className="max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
         <ModalHeader>
           <ModalTitle className="flex items-center">
             {variant === 'destructive' && (
@@ -36,7 +38,7 @@ export function ConfirmationDialog({
             )}
             {title}
           </ModalTitle>
-          <ModalDescription>
+          <ModalDescription id={descriptionId}>
             {description}
           </ModalDescription>
         </ModalHeader>

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { KeyReveal } from './KeyReveal';
 import { KeyForm } from './KeyForm';
-import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/modal';
+import { Modal, ModalContent, ModalHeader, ModalTitle, ModalDescription } from '@/components/ui/modal';
 import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 import { useState } from 'react';
 import * as z from 'zod';
@@ -203,6 +203,9 @@ export function KeyCard({ keyData, onUpdate, onDelete, isUpdating, isDeleting }:
                 <Edit3 className="w-5 h-5 mr-2" />
                 Edit Key
               </ModalTitle>
+              <ModalDescription>
+                Update the details of your key. The key value itself cannot be changed.
+              </ModalDescription>
             </ModalHeader>
             <KeyForm 
               onSubmit={handleUpdate} 

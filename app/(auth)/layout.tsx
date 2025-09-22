@@ -1,3 +1,9 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'SecretBox',
+  description: 'Sign in or create an account for SecretBox.',
+};
 // app/(auth)/layout.tsx
 export default function AuthLayout({
   children,

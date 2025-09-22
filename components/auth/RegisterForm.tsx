@@ -30,7 +30,7 @@ export function RegisterForm() {
     confirmMasterPassword: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isEmailSent, setIsEmailSent] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
@@ -82,7 +82,7 @@ export function RegisterForm() {
         description: response.data?.message || "Please check your email to verify your account.",
       });
       
- // Show success state
+      // Show success state
       setIsEmailSent(true);
       toast({
         title: "Registration Successful",
@@ -125,7 +125,7 @@ export function RegisterForm() {
             Verify Your Email
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            We’ve sent a verification link to your email
+            We've sent a verification link to your email
           </p>
         </div>
 
@@ -166,7 +166,7 @@ export function RegisterForm() {
         </div>
 
         <div className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
-          <p>Didn’t receive the email? Check your spam folder</p>
+          <p>Didn't receive the email? Check your spam folder</p>
         </div>
       </div>
     );
@@ -264,7 +264,9 @@ function NameInput({ value, onChange, disabled }: any) {
           type="text" 
           required 
           value={value} 
-          onChange={onChange} 
+          onChange={onChange}
+          onInput={onChange}
+          data-testid="name-input"
           disabled={disabled} 
           className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
           placeholder="Enter your full name" 
@@ -288,7 +290,9 @@ function EmailInput({ value, onChange, disabled }: any) {
           type="email" 
           required 
           value={value} 
-          onChange={onChange} 
+          onChange={onChange}
+          onInput={onChange}
+          data-testid="email-input"
           disabled={disabled} 
           className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
           placeholder="Enter your email" 
@@ -306,7 +310,8 @@ function TermsCheckbox({ checked, onChange, disabled }: any) {
         type="checkbox" 
         checked={checked} 
         onChange={(e) => onChange(e.target.checked)} 
-        disabled={disabled} 
+        disabled={disabled}
+        data-testid="terms-checkbox"
         className="w-4 h-4 mt-0.5 text-blue-600 bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500" 
       />
       <label htmlFor="terms" className="text-sm text-slate-600 dark:text-slate-400">
@@ -328,6 +333,7 @@ function SubmitButton({ isSubmitting, disabled }: any) {
     <button 
       type="submit" 
       disabled={isSubmitting || disabled} 
+      data-testid="create-account-button"
       className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 disabled:from-slate-400 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
     >
       {isSubmitting ? (

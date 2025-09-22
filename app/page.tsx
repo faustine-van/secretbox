@@ -127,9 +127,9 @@ const HomePage: React.FC = () => {
                 aria-label="Toggle theme"
               > 
                 {theme === 'light' ? (
-                  <div className="w-5 h-5 bg-slate-800 rounded-full"></div>
+                  <div className="w-5 h-5 bg-slate-800 rounded-full" suppressHydrationWarning></div>
                 ) : (
-                  <div className="w-5 h-5 bg-yellow-400 rounded-full"></div>
+                  <div className="w-5 h-5 bg-yellow-400 rounded-full" suppressHydrationWarning></div>
                 )}
               </button>
               <Link href="/login" className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">

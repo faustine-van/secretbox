@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from './use-toast';
+import { useAuth } from './useAuth';
 
 interface DashboardStats {
   totalSecrets: number;
@@ -11,12 +12,17 @@ interface DashboardStats {
 }
 
 export function useDashboardStats() {
+  const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { toast } = useToast();
 
   const fetchStats = useCallback(async () => {
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -45,11 +51,13 @@ export function useDashboardStats() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [user, toast]);
 
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    if (!authLoading) {
+      fetchStats();
+    }
+  }, [fetchStats, authLoading]);
 
   return { stats, isLoading, error, fetchStats };
 }

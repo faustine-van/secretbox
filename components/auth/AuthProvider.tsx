@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/lib/client/supabase';
 import { Session, User } from '@supabase/supabase-js';
-import { useRouter } from 'next/navigation';
 
 interface AuthResponse {
   data?: any;
@@ -23,21 +22,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
-  const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const { data: { user } } = await supabase.auth.getUser();
+    setLoading(true);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setUser(user);
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
     return () => {
-      subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, [supabase.auth]);
 
@@ -110,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       
       await supabase.auth.signOut();
-      router.push('/login');
+      // router.push('/login');
     } catch (error) {
       console.error('Logout error:', error);
     }

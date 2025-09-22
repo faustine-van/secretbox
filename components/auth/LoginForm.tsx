@@ -155,6 +155,8 @@ export function LoginForm() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
+                  onInput={handleInputChange}
+                  data-testid="email-input"
                   className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all duration-200"
                   placeholder="Enter your email"
                   disabled={isSubmitting}
@@ -176,6 +178,8 @@ export function LoginForm() {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
+                  onInput={handleInputChange}
+                  data-testid="password-input"
                   className="w-full pl-10 pr-12 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all duration-200"
                   placeholder="Enter your password"
                   disabled={isSubmitting}
@@ -215,6 +219,7 @@ export function LoginForm() {
             <button
               type="submit"
               disabled={isSubmitting}
+              data-testid="continue-button"
               className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 disabled:from-slate-400 disabled:to-slate-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
@@ -250,6 +255,8 @@ export function LoginForm() {
                   required
                   value={formData.masterPassword}
                   onChange={handleInputChange}
+                  onInput={handleInputChange}
+                  data-testid="master-password-input"
                   className="w-full pl-10 pr-12 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all duration-200"
                   placeholder="Enter your master password"
                   disabled={isSubmitting}
@@ -271,6 +278,7 @@ export function LoginForm() {
               <button
                 type="submit"
                 disabled={isSubmitting}
+                data-testid="unlock-vault-button"
                 className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-slate-400 disabled:to-slate-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (

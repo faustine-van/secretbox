@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Key } from '@/types/supabase';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -11,7 +11,7 @@ export function useKeySearch(collectionId?: string) {
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 500);
 
-  const searchKeys = async (page = 1) => {
+  const searchKeys = useCallback(async (page = 1) => {
     setLoading(true);
     setError(null);
     try {
@@ -31,11 +31,11 @@ export function useKeySearch(collectionId?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [debouncedQuery, collectionId]);
 
   useEffect(() => {
     searchKeys();
-  }, [debouncedQuery]);
+  }, [searchKeys]);
 
   return { keys, loading, error, count, query, setQuery, searchKeys };
 }
