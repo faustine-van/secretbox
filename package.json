@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest && jest --config jest.db.config.js",
+    "test:db": "jest --config jest.db.config.js",
+    "test:watch": "jest --watch",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs-pro-server-api": "^6.10.0",
@@ -18,7 +22,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-toast": "^1.2.15",
     "@supabase/ssr": "^0.3.0",
-    "@supabase/supabase-js": "^2.43.4",
+    "@types/jsonwebtoken": "^9.0.10",
     "autoprefixer": "^10.4.21",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
@@ -26,6 +30,7 @@
     "express-rate-limit": "^8.1.0",
     "framer-motion": "^12.23.16",
     "geoip-lite": "^1.4.10",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.544.0",
     "next": "15.5.0",
     "next-themes": "^0.4.6",
@@ -38,13 +43,26 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@supabase/supabase-js": "^2.57.4",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
     "@types/bcrypt": "^6.0.0",
     "@types/geoip-lite": "^1.4.4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/supertest": "^6.0.3",
+    "dotenv": "^17.2.2",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
+    "playwright": "^1.55.0",
     "postcss": "^8",
+    "supertest": "^7.1.4",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "ts-jest": "^29.4.4",
+    "typescript": "^5",
+    "undici": "^7.16.0"
   }
 }
