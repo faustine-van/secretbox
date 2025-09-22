@@ -20,17 +20,15 @@ SecretBox is a developer-focused secret key management application that helps de
 
 | Feature | Screenshot |
 | --- | --- |
-| **Dashboard** | ![Dashboard](screenshots/Project-1.png) |
-| **Collections View** | ![Collections View](screenshots/Project-2.png) |
-| **Key Management** | ![Key Management](screenshots/Project-3.png) |
-| **Create/Edit Key** | ![Create/Edit Key](screenshots/Project-4.png) |
-| **Secure Key Reveal** | ![Secure Key Reveal](screenshots/Project-5.png) |
-| **Audit Log** | ![Audit Log](screenshots/Project-6.png) |
-| **Login/Register** | ![Login/Register](screenshots/Project-7.png) |
-| **Responsive Design** | ![Responsive Design](screenshots/Project-8.png) |
-| **Dashboard** | ![Dashboard](screenshots/Project-screen-9.png) |
-| **Dashboard** | ![Dashboard](screenshots/Project-screen-10.png) |
-| **Dashboard** | ![Dashboard](screenshots/Project-screen-11.png) |
+| **Dashboard** | ![Dashboard](screenshots/Project-13.png) |
+| **Collections View** | ![Collections View](screenshots/Project-16.png) |
+| **Key Management** | ![Key Management](screenshots/Project-14.png) |
+| **Collection/keys** | ![Collection/keys](screenshots/Project-screen-3.png) |
+| **Code sinnipet** | ![Create/Edit Key](screenshots/Project-4.png) |
+| **Login system** | ![Login system](screenshots/Project-screen-9.png) |
+| **Login system** | ![Login system](screenshots/Project-screen-10.png) |
+| **Gemini interaction** | ![Cli](screenshots/Project-screen-3.png) |
+| **Login/Register** | ![Login/Register](screenshots/Project-9.png) |
 
 ---
 
